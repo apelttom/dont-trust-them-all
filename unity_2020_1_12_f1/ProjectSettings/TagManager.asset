@@ -41,3 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 2209218707
+    locked: 0
+  - name: Player
+    uniqueID: 2495298437
+    locked: 0
+  - name: ChatWindow
+    uniqueID: 1633358199
+    locked: 0
