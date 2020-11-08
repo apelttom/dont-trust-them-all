@@ -4,52 +4,41 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private bool isMoving;
-    private Vector3 originalPosition, targetPosition;
-    public float timeToMove = 0.2f;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    public float moveSpeed = 5f;
+    private Rigidbody2D rigidBody;
+    private Vector2 movementVector;
+    private Animator animator;
+
+    void Start(){
+        rigidBody = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(!isMoving){
-            if (Input.GetKey(KeyCode.W))
-                StartCoroutine(MovePlayer(Vector3.up));
-            
-            if (Input.GetKey(KeyCode.S))
-                StartCoroutine(MovePlayer(Vector3.down));
-            
-            if (Input.GetKey(KeyCode.A))
-                StartCoroutine(MovePlayer(Vector3.left));
+        movementVector = Vector2.zero;
+        if (Input.GetKey(KeyCode.W))
+            movementVector = Vector2.up * moveSpeed;
+        
+        if (Input.GetKey(KeyCode.S))
+            movementVector = Vector2.down * moveSpeed;
+        
+        if (Input.GetKey(KeyCode.A))
+            movementVector = Vector2.left * moveSpeed;
 
-            if (Input.GetKey(KeyCode.D))
-                StartCoroutine(MovePlayer(Vector3.right));
-        }
+        if (Input.GetKey(KeyCode.D))
+            movementVector = Vector2.right * moveSpeed;
     }
 
-    // taken from https://www.youtube.com/watch?v=AiZ4z4qKy44&ab_channel=Comp-3Interactive
-    private IEnumerator MovePlayer(Vector3 direction)
-    {
-        isMoving = true;
-
-        float elapsedTime = 0;
-
-        originalPosition = transform.position;
-        targetPosition = originalPosition + direction;
-        
-        while (elapsedTime < timeToMove)
-        {
-            transform.position = Vector3.Lerp(originalPosition, targetPosition, (elapsedTime / timeToMove));
-            elapsedTime += Time.deltaTime;
-            yield return null;
+    void FixedUpdate(){
+        if(movementVector != Vector2.zero) {
+            animator.SetBool("isRunning", true);
+            animator.SetFloat("inputX", movementVector.x);
+            animator.SetFloat("inputY", movementVector.y);
         }
-
-        transform.position = targetPosition;
-
-        isMoving = false;
+        else {
+            animator.SetBool("isRunning", false);
+        }
+        rigidBody.MovePosition(rigidBody.position + movementVector * Time.fixedDeltaTime);
     }
 }
